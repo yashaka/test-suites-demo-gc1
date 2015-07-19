@@ -14,6 +14,8 @@
         <test.categories>com.tasj.categories.Smoke</test.categories>
         <test.excludeCategories></test.excludeCategories>
         <test.package>mainfeatures</test.package>
+        <allure.version>1.4.12</allure.version>
+        <aspectj.version>1.8.5</aspectj.version>
     </properties>
 
     <dependencies>
@@ -27,6 +29,11 @@
             <artifactId>junit</artifactId>
             <version>4.12</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>ru.yandex.qatools.allure</groupId>
+            <artifactId>allure-junit-adaptor</artifactId>
+            <version>${allure.version}</version>
         </dependency>
     </dependencies>
 
@@ -42,8 +49,23 @@
                         <artifactId>surefire-junit47</artifactId>
                         <version>2.18.1</version>
                     </dependency>
+                    <dependency>
+                        <groupId>org.aspectj</groupId>
+                        <artifactId>aspectjweaver</artifactId>
+                        <version>${aspectj.version}</version>
+                    </dependency>
                 </dependencies>
                 <configuration>
+                    <testFailureIgnore>false</testFailureIgnore>
+                    <argLine>
+                        -javaagent:${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar
+                    </argLine>
+                    <properties>
+                        <property>
+                            <name>listener</name>
+                            <value>ru.yandex.qatools.allure.junit.AllureRunListener</value>
+                        </property>
+                    </properties>
                     <test>com.tasj.${test.package}.*Test</test>
                     <groups>${test.categories}</groups>
                     <excludedGroups>${test.excludeCategories}</excludedGroups>
@@ -66,6 +88,17 @@
         </plugins>
 
     </build>
+
+    <reporting>
+        <excludeDefaults>true</excludeDefaults>
+        <plugins>
+            <plugin>
+                <groupId>ru.yandex.qatools.allure</groupId>
+                <artifactId>allure-maven-plugin</artifactId>
+                <version>2.2</version>
+            </plugin>
+        </plugins>
+    </reporting>
 
     <profiles>
         <profile>
